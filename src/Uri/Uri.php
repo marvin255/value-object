@@ -35,14 +35,11 @@ final class Uri implements UriInterface
 
     public function __construct(string $uri)
     {
-        if (!filter_var($uri, \FILTER_VALIDATE_URL)) {
-            throw new \InvalidArgumentException('Invalid URI string provided');
+        if (!$this->isValidUrl($uri)) {
+            throw new \InvalidArgumentException("Unable to parse URI string: $uri");
         }
 
         $parts = parse_url($uri);
-        if ($parts === false) {
-            throw new \InvalidArgumentException('Unable to parse URI string');
-        }
 
         $this->scheme = $parts['scheme'] ?? '';
         $this->user = $parts['user'] ?? '';
@@ -237,5 +234,18 @@ final class Uri implements UriInterface
         $uri .= $this->fragment !== '' ? '#' . $this->fragment : '';
 
         return $uri;
+    }
+
+    private function isValidUrl(string $url): bool
+    {
+        if ($url === '') {
+            return true;
+        }
+
+        if (parse_url($url, \PHP_URL_SCHEME) === null) {
+            $url = 'http://' . ltrim($url, '/');
+        }
+
+        return filter_var($url, \FILTER_VALIDATE_URL) !== false;
     }
 }
