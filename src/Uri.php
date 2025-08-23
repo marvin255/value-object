@@ -15,7 +15,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @psalm-immutable
  */
-final class Uri implements UriInterface
+final class Uri implements UriInterface, ValueObject
 {
     private string $scheme;
 
@@ -234,6 +234,19 @@ final class Uri implements UriInterface
         $uri .= $this->fragment !== '' ? "#{$this->fragment}" : '';
 
         return $uri;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    #[\Override]
+    public function equals(ValueObject $other): bool
+    {
+        if (!$other instanceof self) {
+            return false;
+        }
+
+        return $this->__toString() === $other->__toString();
     }
 
     private function isValidUrl(string $url): bool
