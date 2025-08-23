@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Marvin255\ValueObject\Tests;
 
 use Marvin255\ValueObject\Uri;
+use Marvin255\ValueObject\ValueObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -144,6 +145,47 @@ final class UriTest extends BaseCase
             ],
             'user without host' => [
                 'https://test:test',
+            ],
+        ];
+    }
+
+    #[DataProvider('provideEquals')]
+    public function testEquals(Uri $object1, ValueObject $object2, bool $expected): void
+    {
+        $result = $object1->equals($object2);
+
+        $this->assertSame($expected, $result);
+    }
+
+    public static function provideEquals(): array
+    {
+        return [
+            'equal URIs' => [
+                'object1' => new Uri('https://test.com/path'),
+                'object2' => new Uri('https://test.com/path'),
+                'expected' => true,
+            ],
+            'not equal URIs' => [
+                'object1' => new Uri('https://test.com/path'),
+                'object2' => new Uri('https://test.com/otherPath'),
+                'expected' => false,
+            ],
+            'different object type' => [
+                'object1' => new Uri('https://test.com/path'),
+                'object2' => new class() implements ValueObject {
+                    #[\Override]
+                    public function __toString(): string
+                    {
+                        return 'https://test.com/path';
+                    }
+
+                    #[\Override]
+                    public function equals(ValueObject $other): bool
+                    {
+                        return true;
+                    }
+                },
+                'expected' => false,
             ],
         ];
     }
