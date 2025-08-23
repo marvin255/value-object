@@ -2,13 +2,13 @@ name: marvin255_value_object
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
-    name: Optional (PHP ${{ matrix.php-versions }})
+    name: Value objects (PHP ${{ matrix.php-versions }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
