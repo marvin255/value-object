@@ -35,7 +35,7 @@ final class Uri implements UriInterface, ValueObject
 
     public function __construct(string $uri)
     {
-        if (!$this->isValidUrl($uri)) {
+        if (!$this->isValidUri($uri)) {
             throw new \InvalidArgumentException("Unable to parse URI string: $uri");
         }
 
@@ -249,16 +249,16 @@ final class Uri implements UriInterface, ValueObject
         return $this->__toString() === $other->__toString();
     }
 
-    private function isValidUrl(string $url): bool
+    private function isValidUri(string $uri): bool
     {
-        if ($url === '') {
+        if ($uri === '') {
             return true;
         }
 
-        if (parse_url($url, \PHP_URL_SCHEME) === null) {
-            $url = 'http://' . ltrim($url, '/');
+        if (parse_url($uri, \PHP_URL_SCHEME) === null) {
+            $uri = 'http://' . ltrim($uri, '/');
         }
 
-        return filter_var($url, \FILTER_VALIDATE_URL) !== false;
+        return filter_var($uri, \FILTER_VALIDATE_URL) !== false;
     }
 }
