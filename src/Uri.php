@@ -71,7 +71,7 @@ final class Uri implements UriInterface
             $authority = $this->getUserInfo() . '@' . $authority;
         }
         if ($this->port !== null) {
-            $authority .= ':' . (string) $this->port;
+            $authority .= ":{$this->port}";
         }
 
         return $authority;
@@ -85,7 +85,7 @@ final class Uri implements UriInterface
     {
         $userInfo = $this->user;
         if ($this->pass !== '') {
-            $userInfo .= ':' . $this->pass;
+            $userInfo .= ":{$this->pass}";
         }
 
         return $userInfo;
@@ -230,8 +230,8 @@ final class Uri implements UriInterface
         $uri = $this->scheme !== '' ? $this->scheme . '://' : '';
         $uri .= $this->getAuthority();
         $uri .= $this->path;
-        $uri .= $this->query !== '' ? '?' . $this->query : '';
-        $uri .= $this->fragment !== '' ? '#' . $this->fragment : '';
+        $uri .= $this->query !== '' ? "?{$this->query}" : '';
+        $uri .= $this->fragment !== '' ? "#{$this->fragment}" : '';
 
         return $uri;
     }
