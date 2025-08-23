@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\ValueObject\Uri;
+namespace Marvin255\ValueObject;
 
 use Psr\Http\Message\UriInterface;
 
@@ -17,21 +17,21 @@ use Psr\Http\Message\UriInterface;
  */
 final class Uri implements UriInterface
 {
-    private readonly string $scheme;
+    private string $scheme;
 
-    private readonly string $user;
+    private string $user;
 
-    private readonly string $pass;
+    private string $pass;
 
-    private readonly string $host;
+    private string $host;
 
-    private readonly ?int $port;
+    private ?int $port;
 
-    private readonly string $path;
+    private string $path;
 
-    private readonly string $query;
+    private string $query;
 
-    private readonly string $fragment;
+    private string $fragment;
 
     public function __construct(string $uri)
     {

@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\ValueObject\Tests\Uri;
+namespace Marvin255\ValueObject\Tests;
 
-use Marvin255\ValueObject\Tests\BaseCase;
-use Marvin255\ValueObject\Uri\Uri;
+use Marvin255\ValueObject\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -33,17 +32,17 @@ final class UriTest extends BaseCase
     {
         return [
             'simple web URL' => [
-                'uri' => 'https://github.com/marvin255/value-object',
+                'uri' => 'https://test.com/marvin255/value-object',
                 'expected' => [
                     'scheme' => 'https',
                     'userInfo' => '',
-                    'authority' => 'github.com',
-                    'host' => 'github.com',
+                    'authority' => 'test.com',
+                    'host' => 'test.com',
                     'port' => null,
                     'path' => '/marvin255/value-object',
                     'query' => '',
                     'fragment' => '',
-                    'full' => 'https://github.com/marvin255/value-object',
+                    'full' => 'https://test.com/marvin255/value-object',
                 ],
             ],
             'related web URL' => [
@@ -75,17 +74,17 @@ final class UriTest extends BaseCase
                 ],
             ],
             'full URI' => [
-                'uri' => 'https://user:password@github.com:123/marvin255/value-object?a=1&b=2#fragment',
+                'uri' => 'https://user:password@test.com:123/marvin255/value-object?a=1&b=2#fragment',
                 'expected' => [
                     'scheme' => 'https',
                     'userInfo' => 'user:password',
-                    'authority' => 'user:password@github.com:123',
-                    'host' => 'github.com',
+                    'authority' => 'user:password@test.com:123',
+                    'host' => 'test.com',
                     'port' => 123,
                     'path' => '/marvin255/value-object',
                     'query' => 'a=1&b=2',
                     'fragment' => 'fragment',
-                    'full' => 'https://user:password@github.com:123/marvin255/value-object?a=1&b=2#fragment',
+                    'full' => 'https://user:password@test.com:123/marvin255/value-object?a=1&b=2#fragment',
                 ],
             ],
             'full DSL URI' => [
@@ -147,5 +146,68 @@ final class UriTest extends BaseCase
                 'https://test:test',
             ],
         ];
+    }
+
+    public function testWithScheme(): void
+    {
+        $obj = new Uri('test.com/path');
+        $new = $obj->withScheme('https');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/path', $new->__toString());
+    }
+
+    public function testWithUserInfo(): void
+    {
+        $obj = new Uri('https://test.com/path');
+        $new = $obj->withUserInfo('user', 'password');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://user:password@test.com/path', $new->__toString());
+    }
+
+    public function testWithHost(): void
+    {
+        $obj = new Uri('https://test.com/path');
+        $new = $obj->withHost('example.com');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://example.com/path', $new->__toString());
+    }
+
+    public function testWithPort(): void
+    {
+        $obj = new Uri('https://test.com/path');
+        $new = $obj->withPort(1234);
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com:1234/path', $new->__toString());
+    }
+
+    public function testWithPath(): void
+    {
+        $obj = new Uri('https://test.com/path');
+        $new = $obj->withPath('/new-path');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/new-path', $new->__toString());
+    }
+
+    public function testWithQuery(): void
+    {
+        $obj = new Uri('https://test.com/path');
+        $new = $obj->withQuery('a=1&b=2');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/path?a=1&b=2', $new->__toString());
+    }
+
+    public function testWithFragment(): void
+    {
+        $obj = new Uri('https://test.com/path');
+        $new = $obj->withFragment('fragment');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/path#fragment', $new->__toString());
     }
 }
