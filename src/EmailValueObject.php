@@ -11,12 +11,22 @@ namespace Marvin255\ValueObject;
  *
  * @psalm-immutable
  */
-final class EmailValueObject implements ValueObject
+final readonly class EmailValueObject implements ValueObject
 {
+    /**
+     * @psalm-var non-empty-string
+     */
     private readonly string $email;
 
+    /**
+     * @throws \InvalidArgumentException if the email is empty or invalid
+     */
     public function __construct(string $email)
     {
+        if (empty($email)) {
+            throw new \InvalidArgumentException('Email address cannot be empty');
+        }
+
         if (!filter_var($email, \FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException("Invalid email address: {$email}");
         }
@@ -46,6 +56,8 @@ final class EmailValueObject implements ValueObject
 
     /**
      * {@inheritDoc}
+     *
+     * @psalm-return non-empty-string
      */
     #[\Override]
     public function __toString(): string
@@ -63,6 +75,17 @@ final class EmailValueObject implements ValueObject
             return false;
         }
 
-        return strtolower($this->email) === strtolower($other->email);
+        return strtolower($this->getValue()) === strtolower($other->getValue());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @psalm-return non-empty-string
+     */
+    #[\Override]
+    public function getValue(): string
+    {
+        return $this->email;
     }
 }

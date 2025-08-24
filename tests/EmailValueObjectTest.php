@@ -22,18 +22,26 @@ final class EmailValueObjectTest extends BaseCase
         $this->assertSame('test.test', $obj->getDomain());
     }
 
+    public function testEmptyEmail(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Email address cannot be empty');
+
+        new EmailValueObject('');
+    }
+
     #[DataProvider('provideInvalidEmails')]
     public function testInvalidEmail(string $email): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid email address: {$email}");
+
         new EmailValueObject($email);
     }
 
     public static function provideInvalidEmails(): array
     {
         return [
-            [''],
             [' '],
             ['test'],
             ['test@'],
@@ -90,9 +98,23 @@ final class EmailValueObjectTest extends BaseCase
                     {
                         return true;
                     }
+
+                    #[\Override]
+                    public function getValue(): mixed
+                    {
+                        return 'test@test.test';
+                    }
                 },
                 'expected' => false,
             ],
         ];
+    }
+
+    public function testGetValue(): void
+    {
+        $email = 'test@test.test';
+        $obj = new EmailValueObject($email);
+
+        $this->assertSame($email, $obj->getValue());
     }
 }

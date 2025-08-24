@@ -8,10 +8,34 @@ namespace Marvin255\ValueObject;
  * Immutable value object that represents a file info.
  *
  * @psalm-api
+ *
+ * @psalm-immutable
+ *
+ * @psalm-suppress MutableDependency
+ * @psalm-suppress ImpureMethodCall
  */
 final class FileInfoValueObject extends \SplFileInfo implements ValueObject
 {
     private const ERROR_MESSAGE = 'This value object is read-only and does not support modification methods';
+
+    /**
+     * @psalm-var non-empty-string
+     */
+    private readonly string $value;
+
+    /**
+     * @throws \InvalidArgumentException if the path is empty
+     */
+    public function __construct(string $pathname)
+    {
+        $trimmedPath = trim($pathname);
+        if ($trimmedPath === '') {
+            throw new \InvalidArgumentException('Path can\'t be empty');
+        }
+
+        $this->value = $trimmedPath;
+        parent::__construct($trimmedPath);
+    }
 
     /**
      * {@inheritdoc}
@@ -47,6 +71,17 @@ final class FileInfoValueObject extends \SplFileInfo implements ValueObject
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @psalm-return non-empty-string
+     */
+    #[\Override]
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
+    /**
      * {@inheritdoc}
      */
     #[\Override]
@@ -64,5 +99,16 @@ final class FileInfoValueObject extends \SplFileInfo implements ValueObject
         }
 
         return $realPath === $otherRealPath;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @psalm-return non-empty-string
+     */
+    #[\Override]
+    public function getValue(): string
+    {
+        return $this->value;
     }
 }

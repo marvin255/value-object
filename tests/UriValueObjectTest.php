@@ -13,6 +13,36 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 final class UriValueObjectTest extends BaseCase
 {
+    #[DataProvider('provideInvalidUri')]
+    public function testInvalidUri(string $uri): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage($uri);
+
+        new UriValueObject($uri);
+    }
+
+    public static function provideInvalidUri(): array
+    {
+        return [
+            'contains spaces' => [
+                'https://github com',
+            ],
+            'contains EOF' => [
+                "https://github\ncom",
+            ],
+            'only schema' => [
+                'https://',
+            ],
+            'incorrect port' => [
+                'https://test.test:qwe',
+            ],
+            'user without host' => [
+                'https://test:test',
+            ],
+        ];
+    }
+
     #[DataProvider('provideParamsGetters')]
     public function testParamsGetters(string $uri, array $expected): void
     {
@@ -26,7 +56,7 @@ final class UriValueObjectTest extends BaseCase
         $this->assertSame($expected['path'], $obj->getPath());
         $this->assertSame($expected['query'], $obj->getQuery());
         $this->assertSame($expected['fragment'], $obj->getFragment());
-        $this->assertSame($expected['full'], (string) $obj);
+        $this->assertSame($expected['full'], $obj->getValue());
     }
 
     public static function provideParamsGetters(): array
@@ -34,6 +64,20 @@ final class UriValueObjectTest extends BaseCase
         return [
             'simple web URL' => [
                 'uri' => 'https://test.com/marvin255/value-object',
+                'expected' => [
+                    'scheme' => 'https',
+                    'userInfo' => '',
+                    'authority' => 'test.com',
+                    'host' => 'test.com',
+                    'port' => null,
+                    'path' => '/marvin255/value-object',
+                    'query' => '',
+                    'fragment' => '',
+                    'full' => 'https://test.com/marvin255/value-object',
+                ],
+            ],
+            'URL with extra spaces' => [
+                'uri' => " \t\n https://test.com/marvin255/value-object ",
                 'expected' => [
                     'scheme' => 'https',
                     'userInfo' => '',
@@ -119,34 +163,75 @@ final class UriValueObjectTest extends BaseCase
         ];
     }
 
-    #[DataProvider('provideInvalidUri')]
-    public function testInvalidUri(string $uri): void
+    public function testWithScheme(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage($uri);
+        $obj = new UriValueObject('test.com/path');
+        $new = $obj->withScheme('https');
 
-        new UriValueObject($uri);
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/path', $new->getValue());
     }
 
-    public static function provideInvalidUri(): array
+    public function testWithUserInfo(): void
     {
-        return [
-            'contains spaces' => [
-                'https://github com',
-            ],
-            'contains EOF' => [
-                "https://github\ncom",
-            ],
-            'only schema' => [
-                'https://',
-            ],
-            'incorrect port' => [
-                'https://test.test:qwe',
-            ],
-            'user without host' => [
-                'https://test:test',
-            ],
-        ];
+        $obj = new UriValueObject('https://test.com/path');
+        $new = $obj->withUserInfo('user', 'password');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://user:password@test.com/path', $new->getValue());
+    }
+
+    public function testWithHost(): void
+    {
+        $obj = new UriValueObject('https://test.com/path');
+        $new = $obj->withHost('example.com');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://example.com/path', $new->getValue());
+    }
+
+    public function testWithPort(): void
+    {
+        $obj = new UriValueObject('https://test.com/path');
+        $new = $obj->withPort(1234);
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com:1234/path', $new->getValue());
+    }
+
+    public function testWithPath(): void
+    {
+        $obj = new UriValueObject('https://test.com/path');
+        $new = $obj->withPath('/new-path');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/new-path', $new->getValue());
+    }
+
+    public function testWithQuery(): void
+    {
+        $obj = new UriValueObject('https://test.com/path');
+        $new = $obj->withQuery('a=1&b=2');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/path?a=1&b=2', $new->getValue());
+    }
+
+    public function testWithFragment(): void
+    {
+        $obj = new UriValueObject('https://test.com/path');
+        $new = $obj->withFragment('fragment');
+
+        $this->assertNotSame($obj, $new);
+        $this->assertSame('https://test.com/path#fragment', $new->getValue());
+    }
+
+    public function testToString(): void
+    {
+        $uri = 'https://test.com/path?a=1&b=2#fragment';
+        $obj = new UriValueObject($uri);
+
+        $this->assertSame($uri, (string) $obj);
     }
 
     #[DataProvider('provideEquals')]
@@ -184,72 +269,15 @@ final class UriValueObjectTest extends BaseCase
                     {
                         return true;
                     }
+
+                    #[\Override]
+                    public function getValue(): string
+                    {
+                        return 'https://test.com/path';
+                    }
                 },
                 'expected' => false,
             ],
         ];
-    }
-
-    public function testWithScheme(): void
-    {
-        $obj = new UriValueObject('test.com/path');
-        $new = $obj->withScheme('https');
-
-        $this->assertNotSame($obj, $new);
-        $this->assertSame('https://test.com/path', $new->__toString());
-    }
-
-    public function testWithUserInfo(): void
-    {
-        $obj = new UriValueObject('https://test.com/path');
-        $new = $obj->withUserInfo('user', 'password');
-
-        $this->assertNotSame($obj, $new);
-        $this->assertSame('https://user:password@test.com/path', $new->__toString());
-    }
-
-    public function testWithHost(): void
-    {
-        $obj = new UriValueObject('https://test.com/path');
-        $new = $obj->withHost('example.com');
-
-        $this->assertNotSame($obj, $new);
-        $this->assertSame('https://example.com/path', $new->__toString());
-    }
-
-    public function testWithPort(): void
-    {
-        $obj = new UriValueObject('https://test.com/path');
-        $new = $obj->withPort(1234);
-
-        $this->assertNotSame($obj, $new);
-        $this->assertSame('https://test.com:1234/path', $new->__toString());
-    }
-
-    public function testWithPath(): void
-    {
-        $obj = new UriValueObject('https://test.com/path');
-        $new = $obj->withPath('/new-path');
-
-        $this->assertNotSame($obj, $new);
-        $this->assertSame('https://test.com/new-path', $new->__toString());
-    }
-
-    public function testWithQuery(): void
-    {
-        $obj = new UriValueObject('https://test.com/path');
-        $new = $obj->withQuery('a=1&b=2');
-
-        $this->assertNotSame($obj, $new);
-        $this->assertSame('https://test.com/path?a=1&b=2', $new->__toString());
-    }
-
-    public function testWithFragment(): void
-    {
-        $obj = new UriValueObject('https://test.com/path');
-        $new = $obj->withFragment('fragment');
-
-        $this->assertNotSame($obj, $new);
-        $this->assertSame('https://test.com/path#fragment', $new->__toString());
     }
 }
