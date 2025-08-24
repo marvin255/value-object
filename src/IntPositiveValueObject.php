@@ -11,13 +11,8 @@ namespace Marvin255\ValueObject;
  *
  * @psalm-immutable
  */
-final readonly class IntPositiveValueObject implements ValueObject
+final readonly class IntPositiveValueObject extends IntValueObject
 {
-    /**
-     * @psalm-var positive-int
-     */
-    private readonly int $value;
-
     /**
      * @throws \InvalidArgumentException if the value is not a positive integer
      */
@@ -27,37 +22,20 @@ final readonly class IntPositiveValueObject implements ValueObject
             throw new \InvalidArgumentException('Value must be a positive integer greater than zero');
         }
 
-        $this->value = $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     */
-    #[\Override]
-    public function __toString(): string
-    {
-        return (string) $this->value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    #[\Override]
-    public function equals(ValueObject $other): bool
-    {
-        return $other instanceof self && $this->getValue() === $other->getValue();
+        parent::__construct($value);
     }
 
     /**
      * {@inheritDoc}
      *
      * @psalm-return positive-int
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
      */
     #[\Override]
     public function getValue(): int
     {
-        return $this->value;
+        return parent::getValue();
     }
 }
