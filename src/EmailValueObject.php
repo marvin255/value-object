@@ -11,7 +11,7 @@ namespace Marvin255\ValueObject;
  *
  * @psalm-immutable
  */
-final readonly class EmailValueObject extends StringValueObject
+final readonly class EmailValueObject extends StringNonEmptyValueObject
 {
     /**
      * @throws \InvalidArgumentException if the email is empty or invalid
@@ -51,20 +51,6 @@ final readonly class EmailValueObject extends StringValueObject
 
     /**
      * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
-     */
-    #[\Override]
-    public function __toString(): string
-    {
-        return parent::__toString();
-    }
-
-    /**
-     * {@inheritDoc}
      */
     #[\Override]
     public function equals(ValueObject $other): bool
@@ -74,19 +60,5 @@ final readonly class EmailValueObject extends StringValueObject
         }
 
         return strtolower($this->getValue()) === strtolower($other->getValue());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
-     */
-    #[\Override]
-    public function getValue(): string
-    {
-        return parent::getValue();
     }
 }
