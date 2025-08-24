@@ -16,7 +16,7 @@ final class FileInfoValueObjectTest extends BaseCase
     public function testConstructWithEmptyPath(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Path can\'t be empty');
+        $this->expectExceptionMessage('Value must be a non-empty string');
 
         new FileInfoValueObject('');
     }
@@ -26,44 +26,17 @@ final class FileInfoValueObjectTest extends BaseCase
         $path = '/some/path/to/file.txt';
         $object = new FileInfoValueObject(" \t\n{$path} \t\n");
 
-        $this->assertSame($path, $object->getPathname());
         $this->assertSame($path, $object->getValue());
     }
 
-    /**
-     * @psalm-suppress UnusedMethodCall
-     */
-    public function testOpenFile(): void
+    public function testGetFileInfo(): void
     {
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('This value object is read-only and does not support modification methods');
+        $path = '/some/path/to/file.txt';
+        $object = new FileInfoValueObject($path);
 
-        $object = new FileInfoValueObject(__FILE__);
-        $object->openFile();
-    }
-
-    /**
-     * @psalm-suppress UnusedMethodCall
-     */
-    public function testSetFileClass(): void
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('This value object is read-only and does not support modification methods');
-
-        $object = new FileInfoValueObject(__FILE__);
-        $object->setFileClass();
-    }
-
-    /**
-     * @psalm-suppress UnusedMethodCall
-     */
-    public function testSetInfoClass(): void
-    {
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('This value object is read-only and does not support modification methods');
-
-        $object = new FileInfoValueObject(__FILE__);
-        $object->setInfoClass();
+        $fileInfo = $object->getFileInfo();
+        $this->assertInstanceOf(\SplFileInfo::class, $fileInfo);
+        $this->assertSame($path, $fileInfo->getPathname());
     }
 
     public function testToString(): void

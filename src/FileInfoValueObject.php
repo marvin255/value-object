@@ -10,18 +10,10 @@ namespace Marvin255\ValueObject;
  * @psalm-api
  *
  * @psalm-immutable
- *
- * @psalm-suppress MutableDependency
- * @psalm-suppress ImpureMethodCall
  */
-final class FileInfoValueObject extends \SplFileInfo implements ValueObject
+final readonly class FileInfoValueObject extends StringNonEmptyValueObject
 {
-    private const ERROR_MESSAGE = 'This value object is read-only and does not support modification methods';
-
-    /**
-     * @psalm-var non-empty-string
-     */
-    private readonly string $value;
+    private readonly \SplFileInfo $fileInfo;
 
     /**
      * @throws \InvalidArgumentException if the path is empty
@@ -29,60 +21,23 @@ final class FileInfoValueObject extends \SplFileInfo implements ValueObject
     public function __construct(string $pathname)
     {
         $trimmedPath = trim($pathname);
-        if ($trimmedPath === '') {
-            throw new \InvalidArgumentException('Path can\'t be empty');
-        }
+        $this->fileInfo = new \SplFileInfo($trimmedPath);
 
-        $this->value = $trimmedPath;
         parent::__construct($trimmedPath);
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @psalm-param resource|null $context
+     * Get the file info.
      */
-    #[\Override]
-    public function openFile(string $mode = 'r', bool $useIncludePath = false, $context = null): \SplFileObject
+    public function getFileInfo(): \SplFileInfo
     {
-        throw new \BadMethodCallException(self::ERROR_MESSAGE);
+        return $this->fileInfo;
     }
 
     /**
      * {@inheritdoc}
      *
-     * @psalm-suppress MethodSignatureMismatch
-     */
-    #[\Override]
-    public function setFileClass(string $class = \SplFileObject::class): void
-    {
-        throw new \BadMethodCallException(self::ERROR_MESSAGE);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MethodSignatureMismatch
-     */
-    #[\Override]
-    public function setInfoClass(string $class = \SplFileInfo::class): void
-    {
-        throw new \BadMethodCallException(self::ERROR_MESSAGE);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     */
-    #[\Override]
-    public function __toString(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * {@inheritdoc}
+     * @psalm-suppress ImpureMethodCall
      */
     #[\Override]
     public function equals(ValueObject $other): bool
@@ -91,24 +46,13 @@ final class FileInfoValueObject extends \SplFileInfo implements ValueObject
             return false;
         }
 
-        $realPath = $this->getRealPath();
-        $otherRealPath = $other->getRealPath();
+        $realPath = $this->getFileInfo()->getRealPath();
+        $otherRealPath = $other->getFileInfo()->getRealPath();
 
         if ($realPath === false && $otherRealPath === false) {
-            return $this->getPathname() === $other->getPathname();
+            return $this->getFileInfo()->getPathname() === $other->getFileInfo()->getPathname();
         }
 
         return $realPath === $otherRealPath;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     */
-    #[\Override]
-    public function getValue(): string
-    {
-        return $this->value;
     }
 }
