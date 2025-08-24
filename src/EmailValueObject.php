@@ -18,6 +18,9 @@ final class EmailValueObject implements ValueObject
      */
     private readonly string $email;
 
+    /**
+     * @throws \InvalidArgumentException if the email is empty or invalid
+     */
     public function __construct(string $email)
     {
         if (empty($email)) {

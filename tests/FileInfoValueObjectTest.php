@@ -13,6 +13,23 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 final class FileInfoValueObjectTest extends BaseCase
 {
+    public function testConstructWithEmptyPath(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Path can\'t be empty');
+
+        new FileInfoValueObject('');
+    }
+
+    public function testConstructTrimsPath(): void
+    {
+        $path = '/some/path/to/file.txt';
+        $object = new FileInfoValueObject(" \t\n{$path} \t\n");
+
+        $this->assertSame($path, $object->getPathname());
+        $this->assertSame($path, $object->getValue());
+    }
+
     public function testOpenFile(): void
     {
         $this->expectException(\BadMethodCallException::class);
