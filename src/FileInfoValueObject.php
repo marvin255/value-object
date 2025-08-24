@@ -8,6 +8,11 @@ namespace Marvin255\ValueObject;
  * Immutable value object that represents a file info.
  *
  * @psalm-api
+ *
+ * @psalm-immutable
+ *
+ * @psalm-suppress MutableDependency
+ * @psalm-suppress ImpureMethodCall
  */
 final class FileInfoValueObject extends \SplFileInfo implements ValueObject
 {

@@ -30,6 +30,9 @@ final class FileInfoValueObjectTest extends BaseCase
         $this->assertSame($path, $object->getValue());
     }
 
+    /**
+     * @psalm-suppress UnusedMethodCall
+     */
     public function testOpenFile(): void
     {
         $this->expectException(\BadMethodCallException::class);
@@ -39,6 +42,9 @@ final class FileInfoValueObjectTest extends BaseCase
         $object->openFile();
     }
 
+    /**
+     * @psalm-suppress UnusedMethodCall
+     */
     public function testSetFileClass(): void
     {
         $this->expectException(\BadMethodCallException::class);
@@ -48,6 +54,9 @@ final class FileInfoValueObjectTest extends BaseCase
         $object->setFileClass();
     }
 
+    /**
+     * @psalm-suppress UnusedMethodCall
+     */
     public function testSetInfoClass(): void
     {
         $this->expectException(\BadMethodCallException::class);
