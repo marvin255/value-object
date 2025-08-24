@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Marvin255\ValueObject\Tests;
 
-use Marvin255\ValueObject\Uri;
+use Marvin255\ValueObject\UriValueObject;
 use Marvin255\ValueObject\ValueObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @internal
  */
-final class UriTest extends BaseCase
+final class UriValueObjectTest extends BaseCase
 {
     #[DataProvider('provideParamsGetters')]
     public function testParamsGetters(string $uri, array $expected): void
     {
-        $obj = new Uri($uri);
+        $obj = new UriValueObject($uri);
 
         $this->assertSame($expected['scheme'], $obj->getScheme());
         $this->assertSame($expected['userInfo'], $obj->getUserInfo());
@@ -125,7 +125,7 @@ final class UriTest extends BaseCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage($uri);
 
-        new Uri($uri);
+        new UriValueObject($uri);
     }
 
     public static function provideInvalidUri(): array
@@ -150,7 +150,7 @@ final class UriTest extends BaseCase
     }
 
     #[DataProvider('provideEquals')]
-    public function testEquals(Uri $object1, ValueObject $object2, bool $expected): void
+    public function testEquals(UriValueObject $object1, ValueObject $object2, bool $expected): void
     {
         $result = $object1->equals($object2);
 
@@ -161,17 +161,17 @@ final class UriTest extends BaseCase
     {
         return [
             'equal URIs' => [
-                'object1' => new Uri('https://test.com/path'),
-                'object2' => new Uri('https://test.com/path'),
+                'object1' => new UriValueObject('https://test.com/path'),
+                'object2' => new UriValueObject('https://test.com/path'),
                 'expected' => true,
             ],
             'not equal URIs' => [
-                'object1' => new Uri('https://test.com/path'),
-                'object2' => new Uri('https://test.com/otherPath'),
+                'object1' => new UriValueObject('https://test.com/path'),
+                'object2' => new UriValueObject('https://test.com/otherPath'),
                 'expected' => false,
             ],
             'different object type' => [
-                'object1' => new Uri('https://test.com/path'),
+                'object1' => new UriValueObject('https://test.com/path'),
                 'object2' => new class() implements ValueObject {
                     #[\Override]
                     public function __toString(): string
@@ -192,7 +192,7 @@ final class UriTest extends BaseCase
 
     public function testWithScheme(): void
     {
-        $obj = new Uri('test.com/path');
+        $obj = new UriValueObject('test.com/path');
         $new = $obj->withScheme('https');
 
         $this->assertNotSame($obj, $new);
@@ -201,7 +201,7 @@ final class UriTest extends BaseCase
 
     public function testWithUserInfo(): void
     {
-        $obj = new Uri('https://test.com/path');
+        $obj = new UriValueObject('https://test.com/path');
         $new = $obj->withUserInfo('user', 'password');
 
         $this->assertNotSame($obj, $new);
@@ -210,7 +210,7 @@ final class UriTest extends BaseCase
 
     public function testWithHost(): void
     {
-        $obj = new Uri('https://test.com/path');
+        $obj = new UriValueObject('https://test.com/path');
         $new = $obj->withHost('example.com');
 
         $this->assertNotSame($obj, $new);
@@ -219,7 +219,7 @@ final class UriTest extends BaseCase
 
     public function testWithPort(): void
     {
-        $obj = new Uri('https://test.com/path');
+        $obj = new UriValueObject('https://test.com/path');
         $new = $obj->withPort(1234);
 
         $this->assertNotSame($obj, $new);
@@ -228,7 +228,7 @@ final class UriTest extends BaseCase
 
     public function testWithPath(): void
     {
-        $obj = new Uri('https://test.com/path');
+        $obj = new UriValueObject('https://test.com/path');
         $new = $obj->withPath('/new-path');
 
         $this->assertNotSame($obj, $new);
@@ -237,7 +237,7 @@ final class UriTest extends BaseCase
 
     public function testWithQuery(): void
     {
-        $obj = new Uri('https://test.com/path');
+        $obj = new UriValueObject('https://test.com/path');
         $new = $obj->withQuery('a=1&b=2');
 
         $this->assertNotSame($obj, $new);
@@ -246,7 +246,7 @@ final class UriTest extends BaseCase
 
     public function testWithFragment(): void
     {
-        $obj = new Uri('https://test.com/path');
+        $obj = new UriValueObject('https://test.com/path');
         $new = $obj->withFragment('fragment');
 
         $this->assertNotSame($obj, $new);

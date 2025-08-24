@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Marvin255\ValueObject\Tests;
 
-use Marvin255\ValueObject\Email;
+use Marvin255\ValueObject\EmailValueObject;
 use Marvin255\ValueObject\ValueObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @internal
  */
-final class EmailTest extends BaseCase
+final class EmailValueObjectTest extends BaseCase
 {
     public function testEmail(): void
     {
-        $obj = new Email('test@test.test');
+        $obj = new EmailValueObject('test@test.test');
 
         $this->assertSame('test@test.test', (string) $obj);
         $this->assertSame('test', $obj->getLocalPart());
@@ -27,7 +27,7 @@ final class EmailTest extends BaseCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid email address: {$email}");
-        new Email($email);
+        new EmailValueObject($email);
     }
 
     public static function provideInvalidEmails(): array
@@ -51,7 +51,7 @@ final class EmailTest extends BaseCase
     }
 
     #[DataProvider('provideEquals')]
-    public function testEquals(Email $object1, ValueObject $object2, bool $expected): void
+    public function testEquals(EmailValueObject $object1, ValueObject $object2, bool $expected): void
     {
         $result = $object1->equals($object2);
 
@@ -62,22 +62,22 @@ final class EmailTest extends BaseCase
     {
         return [
             'equal emails' => [
-                'object1' => new Email('test@test.test'),
-                'object2' => new Email('test@test.test'),
+                'object1' => new EmailValueObject('test@test.test'),
+                'object2' => new EmailValueObject('test@test.test'),
                 'expected' => true,
             ],
             'equal emails in different cases' => [
-                'object1' => new Email('TEST@test.test'),
-                'object2' => new Email('test@TEST.test'),
+                'object1' => new EmailValueObject('TEST@test.test'),
+                'object2' => new EmailValueObject('test@TEST.test'),
                 'expected' => true,
             ],
             'not equal emails' => [
-                'object1' => new Email('test@test.test'),
-                'object2' => new Email('test@test.test1'),
+                'object1' => new EmailValueObject('test@test.test'),
+                'object2' => new EmailValueObject('test@test.test1'),
                 'expected' => false,
             ],
             'different object type' => [
-                'object1' => new Email('test@test.test'),
+                'object1' => new EmailValueObject('test@test.test'),
                 'object2' => new class() implements ValueObject {
                     #[\Override]
                     public function __toString(): string
