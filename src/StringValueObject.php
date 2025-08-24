@@ -19,8 +19,6 @@ readonly class StringValueObject implements ValueObject
 
     /**
      * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
      */
     #[\Override]
     public function __toString(): string
