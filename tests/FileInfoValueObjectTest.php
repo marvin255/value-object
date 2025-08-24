@@ -57,14 +57,19 @@ final class FileInfoValueObjectTest extends BaseCase
     public static function equalsDataProvider(): array
     {
         return [
-            'different instances, same path' => [
+            'real same path' => [
                 'object1' => new FileInfoValueObject(__FILE__),
                 'object2' => new FileInfoValueObject(__FILE__),
                 'expected' => true,
             ],
-            'different instances, different paths' => [
+            'real different paths' => [
                 'object1' => new FileInfoValueObject(__FILE__),
                 'object2' => new FileInfoValueObject(__DIR__),
+                'expected' => false,
+            ],
+            'real path and not real path' => [
+                'object1' => new FileInfoValueObject(__FILE__),
+                'object2' => new FileInfoValueObject('not-existing-file.txt'),
                 'expected' => false,
             ],
             'not real paths, same path' => [

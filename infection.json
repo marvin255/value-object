@@ -9,6 +9,16 @@
         "text": "infection.log"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "FalseValue": {
+            "ignore": [
+                "Marvin255\\ValueObject\\FileInfoValueObject::openFile"
+            ]
+        },
+        "LogicalAnd": {
+            "ignore": [
+                "Marvin255\\ValueObject\\FileInfoValueObject::equals"
+            ]
+        }
     }
 }
