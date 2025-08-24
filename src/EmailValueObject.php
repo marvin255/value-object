@@ -11,13 +11,8 @@ namespace Marvin255\ValueObject;
  *
  * @psalm-immutable
  */
-final readonly class EmailValueObject implements ValueObject
+final readonly class EmailValueObject extends StringNonEmptyValueObject
 {
-    /**
-     * @psalm-var non-empty-string
-     */
-    private readonly string $email;
-
     /**
      * @throws \InvalidArgumentException if the email is empty or invalid
      */
@@ -31,7 +26,7 @@ final readonly class EmailValueObject implements ValueObject
             throw new \InvalidArgumentException("Invalid email address: {$email}");
         }
 
-        $this->email = $email;
+        parent::__construct($email);
     }
 
     /**
@@ -39,7 +34,7 @@ final readonly class EmailValueObject implements ValueObject
      */
     public function getDomain(): string
     {
-        $parts = explode('@', $this->email);
+        $parts = explode('@', $this->getValue());
 
         return $parts[1] ?? '';
     }
@@ -49,20 +44,9 @@ final readonly class EmailValueObject implements ValueObject
      */
     public function getLocalPart(): string
     {
-        $parts = explode('@', $this->email);
+        $parts = explode('@', $this->getValue());
 
         return $parts[0] ?? '';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     */
-    #[\Override]
-    public function __toString(): string
-    {
-        return $this->email;
     }
 
     /**
@@ -71,21 +55,10 @@ final readonly class EmailValueObject implements ValueObject
     #[\Override]
     public function equals(ValueObject $other): bool
     {
-        if (!$other instanceof self) {
+        if (!$other instanceof StringValueObject) {
             return false;
         }
 
         return strtolower($this->getValue()) === strtolower($other->getValue());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     */
-    #[\Override]
-    public function getValue(): string
-    {
-        return $this->email;
     }
 }

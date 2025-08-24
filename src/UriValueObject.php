@@ -16,10 +16,8 @@ use Psr\Http\Message\UriInterface;
  *
  * @psalm-immutable
  */
-final readonly class UriValueObject implements UriInterface, ValueObject
+final readonly class UriValueObject extends StringValueObject implements UriInterface
 {
-    private readonly string $uri;
-
     /**
      * @throws \InvalidArgumentException if the provided string is not a valid URI
      */
@@ -31,7 +29,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
             throw new \InvalidArgumentException("Unable to parse URI string: $uri");
         }
 
-        $this->uri = $trimmedUri;
+        parent::__construct($trimmedUri);
     }
 
     /**
@@ -40,7 +38,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getScheme(): string
     {
-        return URIHelper::extractStringPart($this->uri, \PHP_URL_SCHEME);
+        return URIHelper::extractStringPart($this->getValue(), \PHP_URL_SCHEME);
     }
 
     /**
@@ -68,9 +66,9 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getUserInfo(): string
     {
-        $userInfo = URIHelper::extractStringPart($this->uri, \PHP_URL_USER);
+        $userInfo = URIHelper::extractStringPart($this->getValue(), \PHP_URL_USER);
 
-        $password = URIHelper::extractStringPart($this->uri, \PHP_URL_PASS);
+        $password = URIHelper::extractStringPart($this->getValue(), \PHP_URL_PASS);
         if ($password !== '') {
             $userInfo .= ":{$password}";
         }
@@ -84,7 +82,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getHost(): string
     {
-        return URIHelper::extractStringPart($this->uri, \PHP_URL_HOST);
+        return URIHelper::extractStringPart($this->getValue(), \PHP_URL_HOST);
     }
 
     /**
@@ -93,7 +91,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getPort(): ?int
     {
-        return URIHelper::extractIntPart($this->uri, \PHP_URL_PORT);
+        return URIHelper::extractIntPart($this->getValue(), \PHP_URL_PORT);
     }
 
     /**
@@ -102,7 +100,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getPath(): string
     {
-        return URIHelper::extractStringPart($this->uri, \PHP_URL_PATH);
+        return URIHelper::extractStringPart($this->getValue(), \PHP_URL_PATH);
     }
 
     /**
@@ -111,7 +109,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getQuery(): string
     {
-        return URIHelper::extractStringPart($this->uri, \PHP_URL_QUERY);
+        return URIHelper::extractStringPart($this->getValue(), \PHP_URL_QUERY);
     }
 
     /**
@@ -120,7 +118,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getFragment(): string
     {
-        return URIHelper::extractStringPart($this->uri, \PHP_URL_FRAGMENT);
+        return URIHelper::extractStringPart($this->getValue(), \PHP_URL_FRAGMENT);
     }
 
     /**
@@ -130,7 +128,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     public function withScheme(string $scheme): UriInterface
     {
         $newUri = URIHelper::replaceURIParts(
-            $this->uri,
+            $this->getValue(),
             [
                 'scheme' => $scheme,
             ]
@@ -146,7 +144,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         $newUri = URIHelper::replaceURIParts(
-            $this->uri,
+            $this->getValue(),
             [
                 'user' => $user,
                 'pass' => $password,
@@ -163,7 +161,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     public function withHost(string $host): UriInterface
     {
         $newUri = URIHelper::replaceURIParts(
-            $this->uri,
+            $this->getValue(),
             [
                 'host' => $host,
             ]
@@ -179,7 +177,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     public function withPort(?int $port): UriInterface
     {
         $newUri = URIHelper::replaceURIParts(
-            $this->uri,
+            $this->getValue(),
             [
                 'port' => $port,
             ]
@@ -195,7 +193,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     public function withPath(string $path): UriInterface
     {
         $newUri = URIHelper::replaceURIParts(
-            $this->uri,
+            $this->getValue(),
             [
                 'path' => $path,
             ]
@@ -211,7 +209,7 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     public function withQuery(string $query): UriInterface
     {
         $newUri = URIHelper::replaceURIParts(
-            $this->uri,
+            $this->getValue(),
             [
                 'query' => $query,
             ]
@@ -227,43 +225,12 @@ final readonly class UriValueObject implements UriInterface, ValueObject
     public function withFragment(string $fragment): UriInterface
     {
         $newUri = URIHelper::replaceURIParts(
-            $this->uri,
+            $this->getValue(),
             [
                 'fragment' => $fragment,
             ]
         );
 
         return new self($newUri);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    #[\Override]
-    public function __toString(): string
-    {
-        return $this->uri;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    #[\Override]
-    public function equals(ValueObject $other): bool
-    {
-        if (!$other instanceof self) {
-            return false;
-        }
-
-        return $this->getValue() === $other->getValue();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    #[\Override]
-    public function getValue(): string
-    {
-        return $this->uri;
     }
 }
