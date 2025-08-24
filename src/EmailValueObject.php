@@ -11,7 +11,7 @@ namespace Marvin255\ValueObject;
  *
  * @psalm-immutable
  */
-final class EmailValueObject implements ValueObject
+final readonly class EmailValueObject implements ValueObject
 {
     /**
      * @psalm-var non-empty-string
@@ -75,7 +75,7 @@ final class EmailValueObject implements ValueObject
             return false;
         }
 
-        return strtolower($this->email) === strtolower($other->email);
+        return strtolower($this->getValue()) === strtolower($other->getValue());
     }
 
     /**

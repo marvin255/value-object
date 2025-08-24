@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Marvin255\ValueObject;
 
+use Marvin255\ValueObject\Helper\URIHelper;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -15,40 +16,22 @@ use Psr\Http\Message\UriInterface;
  *
  * @psalm-immutable
  */
-final class UriValueObject implements UriInterface, ValueObject
+final readonly class UriValueObject implements UriInterface, ValueObject
 {
-    private string $scheme;
+    private readonly string $uri;
 
-    private string $user;
-
-    private string $pass;
-
-    private string $host;
-
-    private ?int $port;
-
-    private string $path;
-
-    private string $query;
-
-    private string $fragment;
-
+    /**
+     * @throws \InvalidArgumentException if the provided string is not a valid URI
+     */
     public function __construct(string $uri)
     {
-        if (!$this->isValidUri($uri)) {
+        $trimmedUri = trim($uri);
+
+        if (!URIHelper::isValidUri($trimmedUri)) {
             throw new \InvalidArgumentException("Unable to parse URI string: $uri");
         }
 
-        $parts = parse_url($uri);
-
-        $this->scheme = $parts['scheme'] ?? '';
-        $this->user = $parts['user'] ?? '';
-        $this->pass = $parts['pass'] ?? '';
-        $this->host = $parts['host'] ?? '';
-        $this->port = $parts['port'] ?? null;
-        $this->path = $parts['path'] ?? '';
-        $this->query = $parts['query'] ?? '';
-        $this->fragment = $parts['fragment'] ?? '';
+        $this->uri = $trimmedUri;
     }
 
     /**
@@ -57,7 +40,7 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getScheme(): string
     {
-        return $this->scheme;
+        return URIHelper::extractStringPart($this->uri, \PHP_URL_SCHEME);
     }
 
     /**
@@ -66,12 +49,14 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getAuthority(): string
     {
-        $authority = $this->host;
+        $authority = $this->getHost();
+
         if ($this->getUserInfo() !== '') {
-            $authority = $this->getUserInfo() . '@' . $authority;
+            $authority = "{$this->getUserInfo()}@{$authority}";
         }
-        if ($this->port !== null) {
-            $authority .= ":{$this->port}";
+
+        if ($this->getPort() !== null) {
+            $authority .= ":{$this->getPort()}";
         }
 
         return $authority;
@@ -83,9 +68,11 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getUserInfo(): string
     {
-        $userInfo = $this->user;
-        if ($this->pass !== '') {
-            $userInfo .= ":{$this->pass}";
+        $userInfo = URIHelper::extractStringPart($this->uri, \PHP_URL_USER);
+
+        $password = URIHelper::extractStringPart($this->uri, \PHP_URL_PASS);
+        if ($password !== '') {
+            $userInfo .= ":{$password}";
         }
 
         return $userInfo;
@@ -97,7 +84,7 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getHost(): string
     {
-        return $this->host;
+        return URIHelper::extractStringPart($this->uri, \PHP_URL_HOST);
     }
 
     /**
@@ -106,7 +93,7 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getPort(): ?int
     {
-        return $this->port;
+        return URIHelper::extractIntPart($this->uri, \PHP_URL_PORT);
     }
 
     /**
@@ -115,7 +102,7 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getPath(): string
     {
-        return $this->path;
+        return URIHelper::extractStringPart($this->uri, \PHP_URL_PATH);
     }
 
     /**
@@ -124,7 +111,7 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getQuery(): string
     {
-        return $this->query;
+        return URIHelper::extractStringPart($this->uri, \PHP_URL_QUERY);
     }
 
     /**
@@ -133,7 +120,7 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function getFragment(): string
     {
-        return $this->fragment;
+        return URIHelper::extractStringPart($this->uri, \PHP_URL_FRAGMENT);
     }
 
     /**
@@ -142,10 +129,14 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function withScheme(string $scheme): UriInterface
     {
-        $newUri = clone $this;
-        $newUri->scheme = $scheme;
+        $newUri = URIHelper::replaceURIParts(
+            $this->uri,
+            [
+                'scheme' => $scheme,
+            ]
+        );
 
-        return $newUri;
+        return new self($newUri);
     }
 
     /**
@@ -154,11 +145,15 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
-        $newUri = clone $this;
-        $newUri->user = $user;
-        $newUri->pass = $password ?? '';
+        $newUri = URIHelper::replaceURIParts(
+            $this->uri,
+            [
+                'user' => $user,
+                'pass' => $password,
+            ]
+        );
 
-        return $newUri;
+        return new self($newUri);
     }
 
     /**
@@ -167,10 +162,14 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function withHost(string $host): UriInterface
     {
-        $newUri = clone $this;
-        $newUri->host = $host;
+        $newUri = URIHelper::replaceURIParts(
+            $this->uri,
+            [
+                'host' => $host,
+            ]
+        );
 
-        return $newUri;
+        return new self($newUri);
     }
 
     /**
@@ -179,10 +178,14 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function withPort(?int $port): UriInterface
     {
-        $newUri = clone $this;
-        $newUri->port = $port;
+        $newUri = URIHelper::replaceURIParts(
+            $this->uri,
+            [
+                'port' => $port,
+            ]
+        );
 
-        return $newUri;
+        return new self($newUri);
     }
 
     /**
@@ -191,10 +194,14 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function withPath(string $path): UriInterface
     {
-        $newUri = clone $this;
-        $newUri->path = $path;
+        $newUri = URIHelper::replaceURIParts(
+            $this->uri,
+            [
+                'path' => $path,
+            ]
+        );
 
-        return $newUri;
+        return new self($newUri);
     }
 
     /**
@@ -203,10 +210,14 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function withQuery(string $query): UriInterface
     {
-        $newUri = clone $this;
-        $newUri->query = $query;
+        $newUri = URIHelper::replaceURIParts(
+            $this->uri,
+            [
+                'query' => $query,
+            ]
+        );
 
-        return $newUri;
+        return new self($newUri);
     }
 
     /**
@@ -215,10 +226,14 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function withFragment(string $fragment): UriInterface
     {
-        $newUri = clone $this;
-        $newUri->fragment = $fragment;
+        $newUri = URIHelper::replaceURIParts(
+            $this->uri,
+            [
+                'fragment' => $fragment,
+            ]
+        );
 
-        return $newUri;
+        return new self($newUri);
     }
 
     /**
@@ -227,22 +242,7 @@ final class UriValueObject implements UriInterface, ValueObject
     #[\Override]
     public function __toString(): string
     {
-        $uri = $this->scheme !== '' ? $this->scheme . '://' : '';
-        $uri .= $this->getAuthority();
-        $uri .= $this->path;
-        $uri .= $this->query !== '' ? "?{$this->query}" : '';
-        $uri .= $this->fragment !== '' ? "#{$this->fragment}" : '';
-
-        return $uri;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    #[\Override]
-    public function getValue(): string
-    {
-        return $this->__toString();
+        return $this->uri;
     }
 
     /**
@@ -255,19 +255,15 @@ final class UriValueObject implements UriInterface, ValueObject
             return false;
         }
 
-        return $this->__toString() === $other->__toString();
+        return $this->getValue() === $other->getValue();
     }
 
-    private function isValidUri(string $uri): bool
+    /**
+     * {@inheritDoc}
+     */
+    #[\Override]
+    public function getValue(): string
     {
-        if ($uri === '') {
-            return true;
-        }
-
-        if (parse_url($uri, \PHP_URL_SCHEME) === null) {
-            $uri = 'http://' . ltrim($uri, '/');
-        }
-
-        return filter_var($uri, \FILTER_VALIDATE_URL) !== false;
+        return $this->uri;
     }
 }
