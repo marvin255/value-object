@@ -11,7 +11,7 @@ namespace Marvin255\ValueObject;
  *
  * @psalm-immutable
  */
-final readonly class IntValueObject implements ValueObject
+readonly class IntValueObject implements ValueObject
 {
     public function __construct(private readonly int $value)
     {

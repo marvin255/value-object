@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Marvin255\ValueObject\Tests;
 
-use Marvin255\ValueObject\PositiveIntValueObject;
+use Marvin255\ValueObject\IntPositiveValueObject;
 use Marvin255\ValueObject\ValueObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @internal
  */
-final class PositiveIntValueObjectTest extends BaseCase
+final class IntPositiveValueObjectTest extends BaseCase
 {
     #[DataProvider('invalidValuesProvider')]
     public function testInvalidValues(int $input): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new PositiveIntValueObject($input);
+        new IntPositiveValueObject($input);
     }
 
     public static function invalidValuesProvider(): array
@@ -31,7 +31,7 @@ final class PositiveIntValueObjectTest extends BaseCase
 
     public function testToString(): void
     {
-        $valueObject = new PositiveIntValueObject(123);
+        $valueObject = new IntPositiveValueObject(123);
 
         $this->assertSame('123', (string) $valueObject);
     }
@@ -46,17 +46,17 @@ final class PositiveIntValueObjectTest extends BaseCase
     {
         return [
             'same values' => [
-                'object1' => new PositiveIntValueObject(5),
-                'object2' => new PositiveIntValueObject(5),
+                'object1' => new IntPositiveValueObject(5),
+                'object2' => new IntPositiveValueObject(5),
                 'expected' => true,
             ],
             'different values' => [
-                'object1' => new PositiveIntValueObject(5),
-                'object2' => new PositiveIntValueObject(10),
+                'object1' => new IntPositiveValueObject(5),
+                'object2' => new IntPositiveValueObject(10),
                 'expected' => false,
             ],
             'different types' => [
-                'object1' => new PositiveIntValueObject(123),
+                'object1' => new IntPositiveValueObject(123),
                 'object2' => new class() implements ValueObject {
                     #[\Override]
                     public function __toString(): string
@@ -83,7 +83,7 @@ final class PositiveIntValueObjectTest extends BaseCase
 
     public function testGetValue(): void
     {
-        $valueObject = new PositiveIntValueObject(42);
+        $valueObject = new IntPositiveValueObject(42);
 
         $this->assertSame(42, $valueObject->getValue());
     }
