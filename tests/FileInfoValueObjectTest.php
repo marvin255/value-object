@@ -96,9 +96,23 @@ final class FileInfoValueObjectTest extends BaseCase
                     {
                         return true;
                     }
+
+                    #[\Override]
+                    public function getValue(): string
+                    {
+                        return __FILE__;
+                    }
                 },
                 'expected' => false,
             ],
         ];
+    }
+
+    public function testGetValue(): void
+    {
+        $path = '/some/path/to/file.txt';
+        $object = new FileInfoValueObject($path);
+
+        $this->assertSame($path, $object->getValue());
     }
 }
