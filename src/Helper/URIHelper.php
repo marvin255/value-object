@@ -84,7 +84,7 @@ final class URIHelper
 
         $scheme = self::getURIParamOrReplacement('scheme', $parts, $replacements);
         if ($scheme !== '') {
-            $newUri .= $scheme . '://';
+            $newUri = $scheme . '://';
         }
 
         $user = self::getURIParamOrReplacement('user', $parts, $replacements);
