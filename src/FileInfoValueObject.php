@@ -65,4 +65,13 @@ final class FileInfoValueObject extends \SplFileInfo implements ValueObject
 
         return $realPath === $otherRealPath;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[\Override]
+    public function getValue(): string
+    {
+        return $this->__toString();
+    }
 }

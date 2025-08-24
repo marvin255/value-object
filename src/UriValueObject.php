@@ -237,6 +237,15 @@ final class UriValueObject implements UriInterface, ValueObject
     }
 
     /**
+     * {@inheritDoc}
+     */
+    #[\Override]
+    public function getValue(): string
+    {
+        return $this->__toString();
+    }
+
+    /**
      * {@inheritdoc}
      */
     #[\Override]
