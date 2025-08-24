@@ -5,26 +5,26 @@ declare(strict_types=1);
 namespace Marvin255\ValueObject;
 
 /**
- * Immutable value object that represents a positive integer (greater than zero).
+ * Immutable value object that represents a non-negative integer (zero or greater).
  *
  * @psalm-api
  *
  * @psalm-immutable
  */
-final readonly class PositiveIntValueObject implements ValueObject
+final readonly class IntNonNegativeValueObject implements ValueObject
 {
     /**
-     * @psalm-var positive-int
+     * @psalm-var non-negative-int
      */
     private readonly int $value;
 
     /**
-     * @throws \InvalidArgumentException if the value is not a positive integer
+     * @throws \InvalidArgumentException if the value is not a non-negative integer
      */
     public function __construct(int $value)
     {
-        if ($value <= 0) {
-            throw new \InvalidArgumentException('Value must be a positive integer greater than zero');
+        if ($value < 0) {
+            throw new \InvalidArgumentException('Value must be an integer greater then or equal zero');
         }
 
         $this->value = $value;
@@ -53,7 +53,7 @@ final readonly class PositiveIntValueObject implements ValueObject
     /**
      * {@inheritDoc}
      *
-     * @psalm-return positive-int
+     * @psalm-return non-negative-int
      */
     #[\Override]
     public function getValue(): int
