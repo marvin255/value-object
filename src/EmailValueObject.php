@@ -11,7 +11,7 @@ namespace Marvin255\ValueObject;
  *
  * @psalm-immutable
  */
-final class Email implements ValueObject
+final class EmailValueObject implements ValueObject
 {
     private readonly string $email;
 

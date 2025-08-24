@@ -15,7 +15,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @psalm-immutable
  */
-final class Uri implements UriInterface, ValueObject
+final class UriValueObject implements UriInterface, ValueObject
 {
     private string $scheme;
 
