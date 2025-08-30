@@ -10,6 +10,8 @@ namespace Marvin255\ValueObject;
  * @psalm-api
  *
  * @psalm-immutable
+ *
+ * @psalm-inheritors IntPositiveValueObject|IntNonNegativeValueObject
  */
 readonly class IntValueObject implements ValueObject
 {

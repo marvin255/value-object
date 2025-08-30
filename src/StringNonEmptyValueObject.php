@@ -13,6 +13,8 @@ namespace Marvin255\ValueObject;
  * @psalm-api
  *
  * @psalm-immutable
+ *
+ * @psalm-inheritors EmailValueObject|FileInfoValueObject
  */
 readonly class StringNonEmptyValueObject extends StringValueObject
 {

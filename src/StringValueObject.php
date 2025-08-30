@@ -10,6 +10,8 @@ namespace Marvin255\ValueObject;
  * @psalm-api
  *
  * @psalm-immutable
+ *
+ * @psalm-inheritors StringNonEmptyValueObject|UriValueObject
  */
 readonly class StringValueObject implements ValueObject
 {
