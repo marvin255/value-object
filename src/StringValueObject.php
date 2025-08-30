@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Marvin255\ValueObject;
 
 /**
- * Value object for string values.
+ * Immutable value object for string values.
  *
  * @psalm-api
  *

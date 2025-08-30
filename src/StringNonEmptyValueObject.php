@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Marvin255\ValueObject;
 
 /**
- * Value object for string values.
+ * Immutable value object for non-empty string values.
+ *
+ * @psalm-method non-empty-string getValue()
+ * @psalm-method non-empty-string __toString()
  *
  * @psalm-api
  *
@@ -23,33 +26,5 @@ readonly class StringNonEmptyValueObject extends StringValueObject
         }
 
         parent::__construct($value);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
-     */
-    #[\Override]
-    public function __toString(): string
-    {
-        return parent::__toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-empty-string
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
-     */
-    #[\Override]
-    public function getValue(): string
-    {
-        return parent::getValue();
     }
 }

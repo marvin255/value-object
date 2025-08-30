@@ -8,9 +8,7 @@ use Marvin255\ValueObject\Helper\URIHelper;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Immutable value object that represents a URI (RFC 3986).
- *
- * This implementation is read-only and does not support modification methods.
+ * Immutable value object that represents a URI.
  *
  * @psalm-api
  *
