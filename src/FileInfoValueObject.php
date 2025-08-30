@@ -42,8 +42,10 @@ final readonly class FileInfoValueObject extends StringNonEmptyValueObject
     #[\Override]
     public function equals(ValueObject $other): bool
     {
-        if (!$other instanceof self) {
+        if (!$other instanceof StringValueObject) {
             return false;
+        } elseif (!$other instanceof self) {
+            return $this->getFileInfo()->getRealPath() === $other->getValue();
         }
 
         $realPath = $this->getFileInfo()->getRealPath();

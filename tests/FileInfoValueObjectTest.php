@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Marvin255\ValueObject\Tests;
 
 use Marvin255\ValueObject\FileInfoValueObject;
+use Marvin255\ValueObject\StringNonEmptyValueObject;
 use Marvin255\ValueObject\ValueObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -79,6 +80,16 @@ final class FileInfoValueObjectTest extends BaseCase
             'not real paths, different paths' => [
                 'object1' => new FileInfoValueObject('not-existing-file-1.txt'),
                 'object2' => new FileInfoValueObject('not-existing-file-2.txt'),
+                'expected' => false,
+            ],
+            'string type, same path' => [
+                'object1' => new FileInfoValueObject(__FILE__),
+                'object2' => new StringNonEmptyValueObject(__FILE__),
+                'expected' => true,
+            ],
+            'string type, different paths' => [
+                'object1' => new FileInfoValueObject(__FILE__),
+                'object2' => new StringNonEmptyValueObject(__DIR__),
                 'expected' => false,
             ],
             'different types' => [

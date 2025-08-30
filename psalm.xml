@@ -18,5 +18,10 @@
                 <directory name="./tests"/>
             </errorLevel>
         </UnusedClass>
+        <MissingImmutableAnnotation>
+            <errorLevel type="suppress">
+                <directory name="./tests"/>
+            </errorLevel>
+        </MissingImmutableAnnotation>
     </issueHandlers>
 </psalm>

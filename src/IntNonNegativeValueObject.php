@@ -7,6 +7,8 @@ namespace Marvin255\ValueObject;
 /**
  * Immutable value object that represents a non-negative integer (zero or greater).
  *
+ * @psalm-method non-negative-int getValue()
+ *
  * @psalm-api
  *
  * @psalm-immutable
@@ -23,19 +25,5 @@ final readonly class IntNonNegativeValueObject extends IntValueObject
         }
 
         parent::__construct($value);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return non-negative-int
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
-     */
-    #[\Override]
-    public function getValue(): int
-    {
-        return parent::getValue();
     }
 }

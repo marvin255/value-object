@@ -7,6 +7,8 @@ namespace Marvin255\ValueObject;
 /**
  * Immutable value object that represents a positive integer (greater than zero).
  *
+ * @psalm-method positive-int getValue()
+ *
  * @psalm-api
  *
  * @psalm-immutable
@@ -23,19 +25,5 @@ final readonly class IntPositiveValueObject extends IntValueObject
         }
 
         parent::__construct($value);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @psalm-return positive-int
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
-     */
-    #[\Override]
-    public function getValue(): int
-    {
-        return parent::getValue();
     }
 }
