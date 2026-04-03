@@ -66,6 +66,43 @@ $offset = new IntNonPositiveValueObject(-5);
 echo $offset->value(); // -5
 ```
 
+### Float Value Objects
+
+Work with floating-point numbers safely:
+
+```php
+use Marvin255\ValueObject\FloatValueObject;
+
+// Any float value
+$price = new FloatValueObject(19.99);
+echo $price->value(); // 19.99
+```
+
+### Percentage Value Object
+
+Work with percentage values (0-100) safely:
+
+```php
+use Marvin255\ValueObject\PercentageValueObject;
+
+// Percentage between 0 and 100
+$progress = new PercentageValueObject(75.5);
+echo $progress->value(); // 75.5
+
+$complete = new PercentageValueObject(100);
+echo $complete->value(); // 100
+
+$empty = new PercentageValueObject(0.0);
+echo $empty->value(); // 0
+
+// Decimal precision supported
+$accuracy = new PercentageValueObject(99.99);
+echo $accuracy->value(); // 99.99
+
+// This will throw an exception
+// new PercentageValueObject(101); // throws InvalidArgumentException
+```
+
 ### Email Value Object
 
 Validate and use email addresses:
