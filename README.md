@@ -42,6 +42,8 @@ Work with integers using type-safe value objects:
 use Marvin255\ValueObject\IntValueObject;
 use Marvin255\ValueObject\IntPositiveValueObject;
 use Marvin255\ValueObject\IntNonNegativeValueObject;
+use Marvin255\ValueObject\IntNegativeValueObject;
+use Marvin255\ValueObject\IntNonPositiveValueObject;
 
 // Any integer
 $count = new IntValueObject(-5);
@@ -54,6 +56,14 @@ echo $age->value(); // 25
 // Non-negative integer (>= 0)
 $score = new IntNonNegativeValueObject(0);
 echo $score->value(); // 0
+
+// Negative integer only (< 0)
+$debt = new IntNegativeValueObject(-100);
+echo $debt->value(); // -100
+
+// Non-positive integer (<= 0)
+$offset = new IntNonPositiveValueObject(-5);
+echo $offset->value(); // -5
 ```
 
 ### Email Value Object
