@@ -45,3 +45,4 @@
     - All test classes must extend `Marvin255\ValueObject\Tests\BaseCase`
     - There must be one test class for each production class
 - All new changes must be covered by unit tests.
+- After the change, make sure that ./README.md is also updated accordingly.
