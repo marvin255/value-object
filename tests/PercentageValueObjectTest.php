@@ -154,4 +154,25 @@ final class PercentageValueObjectTest extends BaseCase
             'percent of decimal' => ['percentage' => 25.5, 'number' => 10.5, 'expected' => 2.6775],
         ];
     }
+
+    #[DataProvider('provideAsDecimal')]
+    public function testAsDecimal(float $percentage, float $expected): void
+    {
+        $valueObject = new PercentageValueObject($percentage);
+        $result = $valueObject->asDecimal();
+
+        $this->assertEqualsWithDelta($expected, $result, 1e-9);
+    }
+
+    public static function provideAsDecimal(): array
+    {
+        return [
+            'zero percent' => ['percentage' => 0.0, 'expected' => 0.0],
+            'one percent' => ['percentage' => 1.0, 'expected' => 0.01],
+            'twenty-four percent' => ['percentage' => 24.0, 'expected' => 0.24],
+            'fifty percent' => ['percentage' => 50.0, 'expected' => 0.5],
+            'hundred percent' => ['percentage' => 100.0, 'expected' => 1.0],
+            'decimal percentage' => ['percentage' => 33.33, 'expected' => 0.3333],
+        ];
+    }
 }

@@ -40,4 +40,12 @@ final readonly class PercentageValueObject extends FloatValueObject
     {
         return ($this->getValue() / 100.0) * $number;
     }
+
+    /**
+     * Returns the percentage as a decimal fraction (0-1), e.g., 24% returns 0.24.
+     */
+    public function asDecimal(): float
+    {
+        return $this->getValue() / 100.0;
+    }
 }
