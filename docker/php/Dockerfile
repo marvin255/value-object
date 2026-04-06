@@ -16,7 +16,7 @@ RUN set -xe && apk update && apk add --no-cache \
     linux-headers
 
 
-RUN docker-php-ext-install zip \
+RUN docker-php-ext-install zip bcmath \
     && pecl install xdebug-3.5.0 \
     && docker-php-ext-enable xdebug \
     && echo 'date.timezone=Europe/London' >> /usr/local/etc/php/conf.d/php-date.ini \
