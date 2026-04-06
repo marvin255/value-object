@@ -78,6 +78,17 @@ $price = new FloatValueObject(19.99);
 echo $price->value(); // 19.99
 ```
 
+### BCMath Value Object
+
+Arbitrary-precision decimal numbers using BcMath:
+
+```php
+use Marvin255\ValueObject\BcMathNumberValueObject;
+
+$file = new BcMathNumberValueObject('123.123123');
+echo $empty->value(); // "123.123123"
+```
+
 ### Percentage Value Object
 
 Work with percentage values (0-100) safely:
