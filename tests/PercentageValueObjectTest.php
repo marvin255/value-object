@@ -132,4 +132,26 @@ final class PercentageValueObjectTest extends BaseCase
             'decimal hundred' => ['input' => 100.0, 'expected' => 0.0],
         ];
     }
+
+    #[DataProvider('provideApplyToNumber')]
+    public function testApplyToNumber(float $percentage, float $number, float $expected): void
+    {
+        $valueObject = new PercentageValueObject($percentage);
+        $result = $valueObject->applyToNumber($number);
+
+        $this->assertEqualsWithDelta($expected, $result, 1e-9);
+    }
+
+    public static function provideApplyToNumber(): array
+    {
+        return [
+            'zero percent of hundred' => ['percentage' => 0.0, 'number' => 100.0, 'expected' => 0.0],
+            'fifty percent of hundred' => ['percentage' => 50.0, 'number' => 100.0, 'expected' => 50.0],
+            'hundred percent of hundred' => ['percentage' => 100.0, 'number' => 100.0, 'expected' => 100.0],
+            'thirty-three percent of hundred' => ['percentage' => 33.33, 'number' => 100.0, 'expected' => 33.33],
+            'fifty percent of two hundred' => ['percentage' => 50.0, 'number' => 200.0, 'expected' => 100.0],
+            'percent of negative number' => ['percentage' => 50.0, 'number' => -100.0, 'expected' => -50.0],
+            'percent of decimal' => ['percentage' => 25.5, 'number' => 10.5, 'expected' => 2.6775],
+        ];
+    }
 }

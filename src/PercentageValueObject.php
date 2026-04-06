@@ -32,4 +32,12 @@ final readonly class PercentageValueObject extends FloatValueObject
     {
         return new self(100.0 - $this->getValue());
     }
+
+    /**
+     * Applies this percentage to a number and returns the result.
+     */
+    public function applyToNumber(float $number): float
+    {
+        return ($this->getValue() / 100.0) * $number;
+    }
 }
