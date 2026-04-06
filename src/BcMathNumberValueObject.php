@@ -13,14 +13,19 @@ use BcMath\Number;
  * numeric values as strings to provide arbitrary precision without floating
  * point precision loss.
  *
+ * Accepts both Number and string in constructor, converting strings to Number internally.
+ *
  * @psalm-api
  *
  * @psalm-immutable
  */
 readonly class BcMathNumberValueObject implements ValueObject
 {
-    public function __construct(private readonly Number $value)
+    private readonly Number $value;
+
+    public function __construct(Number|string $value)
     {
+        $this->value = $value instanceof Number ? $value : new Number($value);
     }
 
     /**
