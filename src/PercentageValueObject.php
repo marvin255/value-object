@@ -24,4 +24,28 @@ final readonly class PercentageValueObject extends FloatValueObject
 
         parent::__construct($value);
     }
+
+    /**
+     * Returns a complementary percentage (100% - current value).
+     */
+    public function getComplimentary(): self
+    {
+        return new self(100.0 - $this->getValue());
+    }
+
+    /**
+     * Applies this percentage to a number and returns the result.
+     */
+    public function applyToNumber(float $number): float
+    {
+        return ($this->getValue() / 100.0) * $number;
+    }
+
+    /**
+     * Returns the percentage as a decimal fraction (0-1), e.g., 24% returns 0.24.
+     */
+    public function asDecimal(): float
+    {
+        return $this->getValue() / 100.0;
+    }
 }

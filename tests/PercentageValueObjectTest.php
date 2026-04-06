@@ -110,4 +110,69 @@ final class PercentageValueObjectTest extends BaseCase
         $this->assertSame(33.33, $valueObject->getValue());
         $this->assertSame('33.33', (string) $valueObject);
     }
+
+    #[DataProvider('provideGetComplimentary')]
+    public function testGetComplimentary(float $input, float $expected): void
+    {
+        $valueObject = new PercentageValueObject($input);
+        $result = $valueObject->getComplimentary();
+
+        $this->assertInstanceOf(PercentageValueObject::class, $result);
+        $this->assertEqualsWithDelta($expected, $result->getValue(), 1e-9);
+    }
+
+    public static function provideGetComplimentary(): array
+    {
+        return [
+            'integer zero' => ['input' => 0, 'expected' => 100.0],
+            'decimal zero' => ['input' => 0.0, 'expected' => 100.0],
+            'integer between' => ['input' => 50, 'expected' => 50.0],
+            'decimal between' => ['input' => 33.33, 'expected' => 66.67],
+            'integer hundred' => ['input' => 100, 'expected' => 0.0],
+            'decimal hundred' => ['input' => 100.0, 'expected' => 0.0],
+        ];
+    }
+
+    #[DataProvider('provideApplyToNumber')]
+    public function testApplyToNumber(float $percentage, float $number, float $expected): void
+    {
+        $valueObject = new PercentageValueObject($percentage);
+        $result = $valueObject->applyToNumber($number);
+
+        $this->assertEqualsWithDelta($expected, $result, 1e-9);
+    }
+
+    public static function provideApplyToNumber(): array
+    {
+        return [
+            'zero percent of hundred' => ['percentage' => 0.0, 'number' => 100.0, 'expected' => 0.0],
+            'fifty percent of hundred' => ['percentage' => 50.0, 'number' => 100.0, 'expected' => 50.0],
+            'hundred percent of hundred' => ['percentage' => 100.0, 'number' => 100.0, 'expected' => 100.0],
+            'thirty-three percent of hundred' => ['percentage' => 33.33, 'number' => 100.0, 'expected' => 33.33],
+            'fifty percent of two hundred' => ['percentage' => 50.0, 'number' => 200.0, 'expected' => 100.0],
+            'percent of negative number' => ['percentage' => 50.0, 'number' => -100.0, 'expected' => -50.0],
+            'percent of decimal' => ['percentage' => 25.5, 'number' => 10.5, 'expected' => 2.6775],
+        ];
+    }
+
+    #[DataProvider('provideAsDecimal')]
+    public function testAsDecimal(float $percentage, float $expected): void
+    {
+        $valueObject = new PercentageValueObject($percentage);
+        $result = $valueObject->asDecimal();
+
+        $this->assertEqualsWithDelta($expected, $result, 1e-9);
+    }
+
+    public static function provideAsDecimal(): array
+    {
+        return [
+            'zero percent' => ['percentage' => 0.0, 'expected' => 0.0],
+            'one percent' => ['percentage' => 1.0, 'expected' => 0.01],
+            'twenty-four percent' => ['percentage' => 24.0, 'expected' => 0.24],
+            'fifty percent' => ['percentage' => 50.0, 'expected' => 0.5],
+            'hundred percent' => ['percentage' => 100.0, 'expected' => 1.0],
+            'decimal percentage' => ['percentage' => 33.33, 'expected' => 0.3333],
+        ];
+    }
 }
