@@ -110,4 +110,26 @@ final class PercentageValueObjectTest extends BaseCase
         $this->assertSame(33.33, $valueObject->getValue());
         $this->assertSame('33.33', (string) $valueObject);
     }
+
+    #[DataProvider('provideGetComplimentary')]
+    public function testGetComplimentary(float $input, float $expected): void
+    {
+        $valueObject = new PercentageValueObject($input);
+        $result = $valueObject->getComplimentary();
+
+        $this->assertInstanceOf(PercentageValueObject::class, $result);
+        $this->assertEqualsWithDelta($expected, $result->getValue(), 1e-9);
+    }
+
+    public static function provideGetComplimentary(): array
+    {
+        return [
+            'integer zero' => ['input' => 0, 'expected' => 100.0],
+            'decimal zero' => ['input' => 0.0, 'expected' => 100.0],
+            'integer between' => ['input' => 50, 'expected' => 50.0],
+            'decimal between' => ['input' => 33.33, 'expected' => 66.67],
+            'integer hundred' => ['input' => 100, 'expected' => 0.0],
+            'decimal hundred' => ['input' => 100.0, 'expected' => 0.0],
+        ];
+    }
 }
